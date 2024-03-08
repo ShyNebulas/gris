@@ -1,0 +1,24 @@
+Equality
+Comparison
+Term
+Factor
+Unary
+
+
+LOWEST TO HIGHEST
+
+
+expression -> equality
+equality ->
+comparison ->
+term ->
+factor ->
+unary -> ( "!" | "-" ) unary | primary
+
+
+
+
+primary -> NUMBER | STRING | "true" | "false" | "null" | "(" expression ")"
+
+
+
