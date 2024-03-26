@@ -1,31 +1,35 @@
 <program> ::= <declaration>*
 
-<declaration> ::= <classDecl> | <funDecl> | <varDecl> | <statement>
+<declaration> ::= <classDecl> | <defDecl> | <valDecl> | <statement>
+
 <classDecl> ::= "class" <identifier> ("<" <identifier>)? "{" <function>* "}"
-<funDecl> ::= "fun" <function>
-<varDecl> ::= "var" <identifier> ("=" <expression>)? ";"
+<defDecl> ::= "def" <function>
+<valDecl> ::= "val" <identifier> ":" <type> ("=" <expression>)? ";"
 
 <statement> ::= <exprStmt> | <forStmt> | <ifStmt> | <returnStmt> | <whileStmt> | <block>
 <exprStmt> ::= <expression> ";"
-<forStmt> ::= "for" "(" <expression> (<varDecl> | <exprStmt> | ";") <expression>? ";" <expression>? ")" <statement>
+<forStmt> ::= "for" "(" <expression> ( <valDecl> | <exprStmt> | ";") <expression>? ";" <expression>? ")" <statement>
 <ifStmt> ::= "if" "(" <expression> ")" <statement> ("else" <statement>)?
 <returnStmt> ::= "return" <expression>? ";"
 <whileStmt> ::= "while" "(" <expression> ")" <statement>
 <block> ::= "{" <declaration>* "}"
 
-<expression> ::= <assignment>
+<expression> ::= <assignment> | <ternary>
 <assignment> ::= (<call> ".")? <identifier> "=" <assignment> | <logic_or>
+<ternary> ::= <logic_or> "?" <expression> ":" <expression>
 <logic_or> ::= <logic_and> ("or" <logic_and>)*
 <logic_and> ::= <equality> ("and" <equality>)*
 <equality> ::= <comparison> (("!=" | "==") <comparison>)*
 <comparison> ::= <term> ((">" | ">=" | "<" | "<=") <term>)*
 <term> ::= <factor> (("-" | "+") <factor>)*
-<factor> ::= <unary> (("/" | "*") <unary>)*
-
+<factor> ::= <unary> (("/" | "*" | "%" | "^") <unary>)*
 <unary> ::= ("!" | "-") <unary> | <call>
 <call> ::= <primary> ("(" <arguments>? ")" | "." <identifier>)*
-<primary> ::= "true" | "false" | "nil" | "this" | <number> | <string> | <identifier> | "(" <expression> ")" | "super" "." <identifier>
+<primary> ::= "true" | "false" | "null" | "this" | <number> | <string> | <identifier> | "(" <expression> ")" | "super" "." <identifier>
 
-<function> ::= <identifier> "(" <parameters>? ")" <block>
-<parameters> ::= <identifier> ("," <identifier>)*
+<function> ::= <identifier> "(" <parameters>? ")" "->" <type> <block>
+<parameters> ::= <parameter> ("," <parameter>)*
+<parameter> ::= <identifier> ":" <type>
 <arguments> ::= <expression> ("," <expression>)*
+
+<type> ::= "Boolean" | "Number" | "String" | "Void" | <identifier>
