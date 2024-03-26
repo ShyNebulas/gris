@@ -1,0 +1,31 @@
+<program> ::= <declaration>*
+
+<declaration> ::= <classDecl> | <funDecl> | <varDecl> | <statement>
+<classDecl> ::= "class" <identifier> ("<" <identifier>)? "{" <function>* "}"
+<funDecl> ::= "fun" <function>
+<varDecl> ::= "var" <identifier> ("=" <expression>)? ";"
+
+<statement> ::= <exprStmt> | <forStmt> | <ifStmt> | <returnStmt> | <whileStmt> | <block>
+<exprStmt> ::= <expression> ";"
+<forStmt> ::= "for" "(" <expression> (<varDecl> | <exprStmt> | ";") <expression>? ";" <expression>? ")" <statement>
+<ifStmt> ::= "if" "(" <expression> ")" <statement> ("else" <statement>)?
+<returnStmt> ::= "return" <expression>? ";"
+<whileStmt> ::= "while" "(" <expression> ")" <statement>
+<block> ::= "{" <declaration>* "}"
+
+<expression> ::= <assignment>
+<assignment> ::= (<call> ".")? <identifier> "=" <assignment> | <logic_or>
+<logic_or> ::= <logic_and> ("or" <logic_and>)*
+<logic_and> ::= <equality> ("and" <equality>)*
+<equality> ::= <comparison> (("!=" | "==") <comparison>)*
+<comparison> ::= <term> ((">" | ">=" | "<" | "<=") <term>)*
+<term> ::= <factor> (("-" | "+") <factor>)*
+<factor> ::= <unary> (("/" | "*") <unary>)*
+
+<unary> ::= ("!" | "-") <unary> | <call>
+<call> ::= <primary> ("(" <arguments>? ")" | "." <identifier>)*
+<primary> ::= "true" | "false" | "nil" | "this" | <number> | <string> | <identifier> | "(" <expression> ")" | "super" "." <identifier>
+
+<function> ::= <identifier> "(" <parameters>? ")" <block>
+<parameters> ::= <identifier> ("," <identifier>)*
+<arguments> ::= <expression> ("," <expression>)*
