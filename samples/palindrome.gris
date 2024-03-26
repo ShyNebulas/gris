@@ -1,21 +1,3 @@
-
-# Gris
-
-Gris is a statically typed programming language based on Robert Nystrom's Lox from his textbook Crafting Interpreters. 
-
-
-
-
-## Usage/Examples
-
-Clone the project and open in IntelliJ, it will work in other editors but as this was my editor of choice modfications may be required. No extra build data is required, maven will do that for you.
-
-```
-https://github.com/ShyNebulas/gris.git
-```
-
-Included in ``./samples``
-```gris
 class Bar {
     message() -> String {
         println("Hello, World!");
@@ -47,7 +29,4 @@ val str: String = "civic";
 val foobar: Foo = Foo();
 println(foobar.isPalindrome(str));
 foobar.message();
-
-
-```
 

@@ -1,48 +1,57 @@
 package com.github.gris;
 
-import com.github.gris.ast.Stmt;
-import com.github.gris.ast.printer.Printer;
+import com.github.gris.ast.stmt.Stmt;
 import com.github.gris.lexer.Lexer;
+import com.github.gris.lexer.LexingError;
 import com.github.gris.parser.Parser;
-import com.github.gris.token.Token;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Parameters;
+import com.github.gris.lexer.Token;
+import com.github.gris.parser.ParsingError;
+import com.github.gris.resolver.Resolver;
+import com.github.gris.runtime.Interpreter;
+import com.github.gris.typing.Typing;
+import com.github.gris.typing.TypingError;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.concurrent.Callable;
 
+/**
+ * Main class for the Gris interpreter, which analyzes, interprets, and resolves Gris programming
+ * language files.
+ */
+public class Gris {
+  /**
+   * Main method to execute Gris from the command line.
+   *
+   * @param args Command-line arguments.
+   */
+  public static void main(String... args) throws Exception {
+    File file = new File("./samples/palindrome.gris");
 
-// TODO: Add descriptions
-@Command(name = "gris", mixinStandardHelpOptions = true, description = "")
-public class Gris implements Callable<String> {
+    if (!file.toPath().getFileName().toString().endsWith(".gris"))
+      throw new Exception("Expected '.gris' file.");
+    if (file.length() == 0) throw new Exception("File can't be empty!");
 
-    @Parameters(index = "0", description = "")
-    private File file;
+    String contents = Files.readString(file.toPath());
 
-    @Override
-    public String call() throws Exception {
-        String contents = Files.readString(file.toPath());
-        Lexer lexer = new Lexer(contents);
-        List<Token> tokens = lexer.scanTokens();
-//        for(Token token : tokens) {
-//            System.out.println(token);
-//        }
-        Parser parser = new Parser(tokens);
-        List<Stmt> statements = parser.parse();
+    Lexer lexer = new Lexer(contents);
+    try {
+      List<Token> tokens = lexer.scanTokens();
 
-        for(Stmt statement : statements) {
-            System.out.println(new Printer().print(statement));
-        }
+      Parser parser = new Parser(lexer, tokens);
+      List<Stmt> statements = parser.parse();
 
+      Interpreter interpreter = new Interpreter(lexer);
 
-        return "";
+      Resolver resolver = new Resolver(lexer, interpreter);
+      resolver.resolve(statements);
+
+      final Typing typing = new Typing(lexer, interpreter);
+      typing.check(statements);
+
+      interpreter.interpret(statements);
+    } catch (LexingError | ParsingError | TypingError error) {
+      System.err.println(error);
     }
-
-  public static void main(String... args) {
-      int exitCode = new CommandLine(new Gris()).execute(args);
-      System.exit(exitCode);
   }
 }
